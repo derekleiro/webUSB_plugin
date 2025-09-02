@@ -31,7 +31,7 @@ class WebUSBPlugin extends UsbDevicePlatform {
 
   @override
   Future<List<dynamic>> get pairedDevices async {
-    final jsPromise = this._webUsbJS.getPairedDevices() as JSPromise;
+    final jsPromise = this._webUsbJS.getPairedDevices();
     final result = await jsPromise.toDart;
     return result as List<dynamic>;
   }
@@ -43,40 +43,40 @@ class WebUSBPlugin extends UsbDevicePlatform {
       filtersJS.add(DeviceFilterJS(
           vendorId: deviceFilter.vendorId, productId: deviceFilter.productId));
     }
-    final promise = this._webUsbJS.requestDevice(filtersJS) as JSPromise;
+    final promise = this._webUsbJS.requestDevice(filtersJS.toJS);
     return await promise.toDart;
   }
 
   @override
   Future open(dynamic device) async {
-    final promise = this._webUsbJS.open(device) as JSPromise;
+    final promise = this._webUsbJS.open(device);
     return await promise.toDart;
     // No return value needed for void function
   }
 
   @override
   Future close(dynamic device) async {
-    final promise = this._webUsbJS.close(device) as JSPromise;
+    final promise = this._webUsbJS.close(device);
     return await promise.toDart;
   }
 
   @override
   Future claimInterface(dynamic device, int interfaceNumber) async {
     final promise =
-        this._webUsbJS.claimInterface(device, interfaceNumber) as JSPromise;
+        this._webUsbJS.claimInterface(device, interfaceNumber);
     return await promise.toDart;
   }
 
   @override
   Future releaseInterface(dynamic device, int interfaceNumber) async {
     final promise =
-        this._webUsbJS.releaseInterface(device, interfaceNumber) as JSPromise;
+        this._webUsbJS.releaseInterface(device, interfaceNumber);
     return await promise.toDart;
   }
 
   @override
   Future reset(dynamic device) async {
-    final promise = this._webUsbJS.reset(device) as JSPromise;
+    final promise = this._webUsbJS.reset(device);
     return await promise.toDart;
   }
 
@@ -84,14 +84,13 @@ class WebUSBPlugin extends UsbDevicePlatform {
   Future selectConfiguration(dynamic device, int configurationValue) async {
     final promise = this
         ._webUsbJS
-        .selectConfiguration(device, configurationValue) as JSPromise;
+        .selectConfiguration(device, configurationValue);
     return await promise.toDart;
   }
 
   @override
   Future clearHalt(dynamic device, String direction, int endpointNumber) async {
-    final promise = this._webUsbJS.clearHalt(device, direction, endpointNumber)
-        as JSPromise;
+    final promise = this._webUsbJS.clearHalt(device, direction, endpointNumber);
     return await promise.toDart;
   }
 
@@ -107,7 +106,7 @@ class WebUSBPlugin extends UsbDevicePlatform {
             request: setup.request,
             value: setup.value,
             index: setup.index),
-        length) as JSPromise;
+        length);
 
     final result = await promise.toDart;
     return USBInTransferResult.fromDataJS(result);
@@ -125,7 +124,7 @@ class WebUSBPlugin extends UsbDevicePlatform {
             request: setup.request,
             value: setup.value,
             index: setup.index),
-        data) as JSPromise;
+        data);
     final result = await promise.toDart;
     return USBOutTransferResult.fromDataJS(result);
   }
@@ -134,8 +133,7 @@ class WebUSBPlugin extends UsbDevicePlatform {
   Future<USBInTransferResult> transferIn(
       dynamic device, int endpointNumber, int length) async {
     try {
-      var promise = this._webUsbJS.transferIn(device, endpointNumber, length)
-          as JSPromise;
+      var promise = this._webUsbJS.transferIn(device, endpointNumber, length);
       final response =
           await promise.toDart.timeout(Duration(milliseconds: 3000));
 
@@ -152,7 +150,7 @@ class WebUSBPlugin extends UsbDevicePlatform {
   Future<USBOutTransferResult> transferOut(
       dynamic device, int endpointNumber, dynamic data) async {
     var promise =
-        this._webUsbJS.transferOut(device, endpointNumber, data) as JSPromise;
+        this._webUsbJS.transferOut(device, endpointNumber, data);
     final result = await promise.toDart;
     return USBOutTransferResult.fromDataJS(result);
   }
@@ -161,7 +159,7 @@ class WebUSBPlugin extends UsbDevicePlatform {
   Future<USBIsochronousInTransferResult> isochronousTransferIn(
       dynamic device, int endpointNumber, List<int> packetLengths) async {
     var promise = this._webUsbJS.isochronousTransferIn(
-        device, endpointNumber, packetLengths) as JSPromise;
+        device, endpointNumber, packetLengths);
     final result = await promise.toDart;
     return USBIsochronousInTransferResult.fromDataJS(result);
   }
@@ -171,7 +169,7 @@ class WebUSBPlugin extends UsbDevicePlatform {
       dynamic device, int endpointNumber, dynamic data) async {
     var promise = this
         ._webUsbJS
-        .isochronousTransferOut(device, endpointNumber, data) as JSPromise;
+        .isochronousTransferOut(device, endpointNumber, data);
     var result = await promise.toDart;
     return USBIsochronousOutTransferResult.fromDataJS(result);
   }
@@ -241,52 +239,46 @@ extension type WebUsbJS._(JSObject _) implements JSObject {
   external bool isSupported();
 
   // Pair device
-  external Promise getPairedDevices();
+  external JSPromise getPairedDevices();
 
-  external Promise requestDevice(List<DeviceFilterJS> filters);
+  external JSPromise requestDevice(JSArray<DeviceFilterJS> filters);
 
-  external setOnConnectCallback(JSFunction callback);
+  external void setOnConnectCallback(JSFunction callback);
 
-  external setOnDisconnectCallback(JSFunction callback);
+  external void setOnDisconnectCallback(JSFunction callback);
 
   /// Session setup
-  external Promise open(JSAny device);
+  external JSPromise open(JSAny device);
 
-  external Promise close(JSAny device);
+  external JSPromise close(JSAny device);
 
-  external Promise claimInterface(JSAny device, int interfaceNumber);
+  external JSPromise claimInterface(JSAny device, int interfaceNumber);
 
-  external Promise releaseInterface(JSAny device, int interfaceNumber);
+  external JSPromise releaseInterface(JSAny device, int interfaceNumber);
 
-  external Promise reset(JSAny device);
+  external JSPromise reset(JSAny device);
 
-  external Promise selectConfiguration(JSAny device, int configurationValue);
+  external JSPromise selectConfiguration(JSAny device, int configurationValue);
 
-  external Promise clearHalt(
+  external JSPromise clearHalt(
       JSAny device, String direction, int endpointNumber);
 
   /// Data transfer
-  external Promise controlTransferIn(
+  external JSPromise controlTransferIn(
       JSAny device, SetupParamJS setup, int? length);
 
-  external Promise controlTransferOut(
+  external JSPromise controlTransferOut(
       JSAny device, SetupParamJS setup, JSAny data);
 
-  external Promise transferIn(JSAny device, int endpointNumber, int length);
+  external JSPromise transferIn(JSAny device, int endpointNumber, int length);
 
-  external Promise transferOut(JSAny device, int endpointNumber, JSAny data);
+  external JSPromise transferOut(JSAny device, int endpointNumber, JSAny data);
 
-  external Promise isochronousTransferIn(
+  external JSPromise isochronousTransferIn(
       JSAny device, int endpointNumber, List<int> packetLengths);
 
-  external Promise isochronousTransferOut(
+  external JSPromise isochronousTransferOut(
       JSAny device, int endpointNumber, JSAny data);
-}
-
-// Convert to extension type
-@JS()
-extension type Promise._(JSObject _) implements JSObject {
-  external void then(JSFunction onFulfilled, JSFunction onRejected);
 }
 
 // Convert to extension type
