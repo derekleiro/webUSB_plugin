@@ -1,4 +1,5 @@
-import 'dart:js_util';
+import 'dart:js_interop';
+import 'dart:js_interop_unsafe';
 
 import 'package:usb_device_platform_interface/models/transfer/response/status_response.dart';
 
@@ -13,8 +14,8 @@ class USBOutTransferResult {
 
   static USBOutTransferResult fromDataJS(dynamic res) {
     StatusResponse status =
-        StatusResponseHelper.fromString(getProperty(res, 'status'));
+        StatusResponseHelper.fromString((res as JSObject)['status'].dartify() as String);
     return USBOutTransferResult(
-        bytesWritten: getProperty(res, 'bytesWritten'), status: status);
+        bytesWritten: (res)['bytesWritten'].dartify() as int, status: status);
   }
 }

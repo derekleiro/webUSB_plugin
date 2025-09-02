@@ -1,4 +1,5 @@
-import 'dart:js_util';
+import 'dart:js_interop';
+import 'dart:js_interop_unsafe';
 
 import 'package:usb_device_platform_interface/models/configurations/usb_endpoint.dart';
 
@@ -13,10 +14,10 @@ class USBAlternateInterface {
       List<dynamic> alternateInterfaces) {
     return alternateInterfaces
         .map((e) => USBAlternateInterface(
-              alternateSetting: getProperty(e, "alternateSetting"),
-              endpoints: getProperty(e, "endpoints") == null
+              alternateSetting: (e as JSObject)['alternateSetting'].dartify() as int,
+              endpoints: (e)['endpoints'].dartify() == null
                   ? null
-                  : USBEndpoint.fromEndpoints(getProperty(e, "endpoints")),
+                  : USBEndpoint.fromEndpoints((e)['endpoints'].dartify() as List<dynamic>),
             ))
         .toList();
   }

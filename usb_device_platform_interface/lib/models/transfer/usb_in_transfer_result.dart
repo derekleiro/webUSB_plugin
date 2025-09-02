@@ -1,4 +1,5 @@
-import 'dart:js_util';
+import 'dart:js_interop';
+import 'dart:js_interop_unsafe';
 
 import 'dart:typed_data';
 
@@ -14,10 +15,11 @@ class USBInTransferResult {
   });
 
   static USBInTransferResult fromDataJS(dynamic dataJS) {
-    var data = getProperty(dataJS, 'data');
+    var data = (dataJS as JSObject)['data'] as JSObject;
     StatusResponse status =
-        StatusResponseHelper.fromString(getProperty(dataJS, 'status'));
+        StatusResponseHelper.fromString((dataJS)['status'].dartify() as String);
     return USBInTransferResult(
-        data: Uint8List.view(getProperty(data, 'buffer')), status: status);
+        data: Uint8List.view((data)['buffer'].dartify() as ByteBuffer),
+        status: status);
   }
 }

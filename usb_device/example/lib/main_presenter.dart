@@ -1,5 +1,5 @@
-import 'dart:js_util';
-
+import 'dart:js_interop';
+import 'dart:js_interop_unsafe';
 import 'package:usb_device/usb_device.dart';
 
 import 'main.dart';
@@ -62,32 +62,32 @@ class MainPresenter {
   Map<String, dynamic> getPairedDeviceInfo() {
     var pairedDevice = this.viewModel.pairedDevice;
     final USBConfiguration? currentConfiguration =
-        getProperty(pairedDevice, 'configuration') == null
+    (pairedDevice as JSObject)["configuration"].dartify() == null
             ? null
             : _getCurrentUSBConfigurationInfo(
-                getProperty(pairedDevice, 'configuration'));
+                (pairedDevice)["configuration"].dartify() as dynamic);
     final List<USBConfiguration> configurations =
         _getAvailableUSBConfigurations(
-            getProperty(pairedDevice, 'configurations'));
+            (pairedDevice)["configurations"].dartify() as List<dynamic>);
 
     try {
       return <String, dynamic>{
-        'usbVersionMajor': getProperty(pairedDevice, 'usbVersionMajor'),
-        'usbVersionMinor': getProperty(pairedDevice, 'usbVersionMinor'),
-        'usbVersionSubminor': getProperty(pairedDevice, 'usbVersionSubminor'),
-        'deviceClass': getProperty(pairedDevice, 'deviceClass'),
-        'deviceSubclass': getProperty(pairedDevice, 'deviceSubclass'),
-        'deviceProtocol': getProperty(pairedDevice, 'deviceProtocol'),
-        'vendorId': getProperty(pairedDevice, 'vendorId'),
-        'productId': getProperty(pairedDevice, 'productId'),
-        'deviceVersionMajor': getProperty(pairedDevice, 'deviceVersionMajor'),
-        'deviceVersionMinor': getProperty(pairedDevice, 'deviceVersionMinor'),
+        'usbVersionMajor': (pairedDevice)["usbVersionMajor"].dartify(),
+        'usbVersionMinor': (pairedDevice)["usbVersionMinor"].dartify(),
+        'usbVersionSubminor': (pairedDevice)["usbVersionSubminor"].dartify(),
+        'deviceClass': (pairedDevice)["deviceClass"].dartify(),
+        'deviceSubclass': (pairedDevice)["deviceSubclass"].dartify(),
+        'deviceProtocol': (pairedDevice)["deviceProtocol"].dartify(),
+        'vendorId': (pairedDevice)["vendorId"].dartify(),
+        'productId': (pairedDevice)["productId"].dartify(),
+        'deviceVersionMajor': (pairedDevice)["deviceVersionMajor"].dartify(),
+        'deviceVersionMinor': (pairedDevice)["deviceVersionMinor"].dartify(),
         'deviceVersionSubminor':
-            getProperty(pairedDevice, 'deviceVersionSubminor'),
-        'manufacturerName': getProperty(pairedDevice, 'manufacturerName'),
-        'productName': getProperty(pairedDevice, 'productName'),
-        'serialNumber': getProperty(pairedDevice, 'serialNumber'),
-        'opened': getProperty(pairedDevice, 'opened'),
+            (pairedDevice)["deviceVersionSubminor"].dartify(),
+        'manufacturerName': (pairedDevice)["manufacturerName"].dartify(),
+        'productName': (pairedDevice)["productName"].dartify(),
+        'serialNumber': (pairedDevice)["serialNumber"].dartify(),
+        'opened': (pairedDevice)["opened"].dartify(),
         'configurations': configurations,
         'actualConfiguration': currentConfiguration.toString()
       };
@@ -110,7 +110,7 @@ class MainPresenter {
   bool isDeviceOpen() {
     var pairedDevice = this.viewModel.pairedDevice;
     if (pairedDevice != null) {
-      return getProperty(pairedDevice, 'opened');
+      return (pairedDevice as JSObject)["opened"].dartify() as bool;
     }
     return false;
   }

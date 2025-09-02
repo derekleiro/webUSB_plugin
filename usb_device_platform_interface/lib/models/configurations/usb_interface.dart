@@ -1,5 +1,5 @@
-import 'dart:js_util';
-
+import 'dart:js_interop';
+import 'dart:js_interop_unsafe';
 import 'package:usb_device_platform_interface/models/configurations/usb_alternate_interface.dart';
 
 class USBInterface {
@@ -15,12 +15,13 @@ class USBInterface {
   static List<USBInterface> fromInterfaces(List<dynamic> interfaces) {
     return interfaces
         .map((interface) => USBInterface(
-            interfaceNumber: getProperty(interface, "interfaceNumber"),
-            claimed: getProperty(interface, "claimed"),
-            alternatesInterface: getProperty(interface, "alternates") == null
+            interfaceNumber:
+                (interface as JSObject)['interfaceNumber'].dartify() as int,
+            claimed: (interface)['claimed'].dartify() as bool,
+            alternatesInterface: (interface)['alternates'].dartify() == null
                 ? null
                 : USBAlternateInterface.fromAlternateInterfaces(
-                    getProperty(interface, "alternates"))))
+                    (interface)['alternates'].dartify() as List<dynamic>)))
         .toList();
   }
 

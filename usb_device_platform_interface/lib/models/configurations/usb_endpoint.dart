@@ -1,4 +1,5 @@
-import 'dart:js_util';
+import 'dart:js_interop';
+import 'dart:js_interop_unsafe';
 
 class USBEndpoint {
   final String direction;
@@ -15,10 +16,10 @@ class USBEndpoint {
   static List<USBEndpoint> fromEndpoints(List<dynamic> endpoints) {
     return endpoints
         .map((endpoint) => USBEndpoint(
-            direction: getProperty(endpoint, "direction"),
-            endpointNumber: getProperty(endpoint, "endpointNumber"),
-            packetSize: getProperty(endpoint, "packetSize"),
-            type: getProperty(endpoint, "type")))
+            direction: (endpoint as JSObject)['direction'].dartify() as String,
+            endpointNumber: (endpoint)['endpointNumber'].dartify() as int,
+            packetSize: (endpoint)['packetSize'].dartify() as int,
+            type: (endpoint)['type'].dartify() as String))
         .toList();
   }
 

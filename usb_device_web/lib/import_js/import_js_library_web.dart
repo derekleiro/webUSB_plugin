@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'dart:html' as html;
+import 'package:web/web.dart' as web;
 
 class ImportJsLibraryWeb {
   /// Injects the library by its [url]
@@ -7,13 +7,12 @@ class ImportJsLibraryWeb {
     return _importJSLibraries([url]);
   }
 
-  static html.ScriptElement _createScriptTag(String library) {
-    final html.ScriptElement script = html.ScriptElement()
-      ..type = "text/javascript"
-      ..charset = "utf-8"
-      ..async = true
-      //..defer = true
-      ..src = library;
+  static web.HTMLScriptElement _createScriptTag(String library) {
+    final web.HTMLScriptElement script = web.HTMLScriptElement();
+    script.type = "text/javascript";
+    script.charset = "utf-8";
+    script.async = true;
+    script.src = library;
     return script;
   }
 
@@ -21,12 +20,12 @@ class ImportJsLibraryWeb {
   /// Future that resolves when all load.
   static Future<void> _importJSLibraries(List<String> libraries) {
     final List<Future<void>> loading = <Future<void>>[];
-    final head = html.querySelector('head');
+    final head = web.document.head;
 
     libraries.forEach((String library) {
       if (!isImported(library)) {
         final scriptTag = _createScriptTag(library);
-        head!.children.add(scriptTag);
+        head!.appendChild(scriptTag);
         loading.add(scriptTag.onLoad.first);
       }
     });
@@ -34,12 +33,15 @@ class ImportJsLibraryWeb {
     return Future.wait(loading);
   }
 
-  static bool _isLoaded(html.Element head, String url) {
+  static bool _isLoaded(web.HTMLHeadElement head, String url) {
     if (url.startsWith("./")) {
       url = url.replaceFirst("./", "");
     }
-    for (var element in head.children) {
-      if (element is html.ScriptElement) {
+
+    final children = head.children; // HTMLCollection
+    for (var i = 0; i < children.length; i++) {
+      final element = children.item(i);
+      if (element is web.HTMLScriptElement) {
         if (element.src.endsWith(url)) {
           return true;
         }
@@ -49,7 +51,7 @@ class ImportJsLibraryWeb {
   }
 
   static bool isImported(String url) {
-    final head = html.querySelector('head')!;
-    return _isLoaded(head, url);
+    final head = web.document.head;
+    return head != null && _isLoaded(head, url);
   }
 }

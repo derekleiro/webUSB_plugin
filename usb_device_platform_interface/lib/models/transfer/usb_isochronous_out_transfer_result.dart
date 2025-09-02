@@ -1,4 +1,5 @@
-import 'dart:js_util';
+import 'dart:js_interop';
+import 'dart:js_interop_unsafe';
 
 class USBIsochronousOutTransferResult {
   final dynamic packets;
@@ -9,6 +10,6 @@ class USBIsochronousOutTransferResult {
 
   static USBIsochronousOutTransferResult fromDataJS(dynamic dataJS) {
     return USBIsochronousOutTransferResult(
-        packets: getProperty(dataJS, 'packets'));
+        packets: (dataJS as JSObject)['packets'].dartify() as dynamic);
   }
 }

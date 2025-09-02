@@ -1,4 +1,5 @@
-import 'dart:js_util';
+import 'dart:js_interop';
+import 'dart:js_interop_unsafe';
 
 class USBDeviceInfo {
   final int usbVersionMajor;
@@ -36,21 +37,21 @@ class USBDeviceInfo {
 
   static USBDeviceInfo fromDeviceJS(dynamic pairedDevice) {
     return USBDeviceInfo(
-      getProperty(pairedDevice, 'usbVersionMajor'),
-      getProperty(pairedDevice, 'usbVersionMinor'),
-      getProperty(pairedDevice, 'usbVersionSubminor'),
-      getProperty(pairedDevice, 'deviceClass'),
-      getProperty(pairedDevice, 'deviceSubclass'),
-      getProperty(pairedDevice, 'deviceProtocol'),
-      getProperty(pairedDevice, 'vendorId'),
-      getProperty(pairedDevice, 'productId'),
-      getProperty(pairedDevice, 'deviceVersionMajor'),
-      getProperty(pairedDevice, 'deviceVersionMinor'),
-      getProperty(pairedDevice, 'deviceVersionSubminor'),
-      getProperty(pairedDevice, 'manufacturerName'),
-      getProperty(pairedDevice, 'productName'),
-      getProperty(pairedDevice, 'serialNumber'),
-      getProperty(pairedDevice, 'opened'),
+      (pairedDevice as JSObject)['usbVersionMajor'].dartify() as int,
+      (pairedDevice)['usbVersionMinor'].dartify() as int,
+      (pairedDevice)['usbVersionSubminor'].dartify() as int,
+      (pairedDevice)['deviceClass'].dartify() as int,
+      (pairedDevice)['deviceSubclass'].dartify() as int,
+      (pairedDevice)['deviceProtocol'].dartify() as int,
+      (pairedDevice)['vendorId'].dartify() as int,
+      (pairedDevice)['productId'].dartify() as int,
+      (pairedDevice)['deviceVersionMajor'].dartify() as int,
+      (pairedDevice)['deviceVersionMinor'].dartify() as int,
+      (pairedDevice)['deviceVersionSubminor'].dartify() as int,
+      (pairedDevice)['manufacturerName'].dartify() as String,
+      (pairedDevice)['productName'].dartify() as String,
+      (pairedDevice)['serialNumber'].dartify() as String,
+      (pairedDevice)['opened'].dartify() as bool,
     );
   }
 }

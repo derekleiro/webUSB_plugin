@@ -1,4 +1,5 @@
-import 'dart:js_util';
+import 'dart:js_interop';
+import 'dart:js_interop_unsafe';
 import 'dart:typed_data';
 
 class USBIsochronousInTransferResult {
@@ -11,9 +12,9 @@ class USBIsochronousInTransferResult {
   });
 
   static USBIsochronousInTransferResult fromDataJS(dynamic dataJS) {
-    var data = getProperty(dataJS, 'data');
+    var data = (dataJS as JSObject)['data'] as JSObject;
     return USBIsochronousInTransferResult(
-        data: Uint8List.view(getProperty(data, 'buffer')),
-        packets: getProperty(dataJS, 'packets'));
+        data: Uint8List.view((data)['buffer'].dartify() as ByteBuffer),
+        packets: (dataJS)['packets'].dartify() as dynamic);
   }
 }

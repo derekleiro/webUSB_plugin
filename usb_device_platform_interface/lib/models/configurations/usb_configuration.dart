@@ -1,5 +1,5 @@
-import 'dart:js_util';
-
+import 'dart:js_interop';
+import 'dart:js_interop_unsafe';
 import 'package:usb_device_platform_interface/models/configurations/usb_interface.dart';
 
 class USBConfiguration {
@@ -14,12 +14,14 @@ class USBConfiguration {
 
   static USBConfiguration fromConfiguration(dynamic configuration) {
     return USBConfiguration(
-      configurationName: getProperty(configuration, "configurationName"),
-      configurationValue: getProperty(configuration, "configurationValue"),
-      usbInterfaces: getProperty(configuration, "interfaces") == null
+      configurationName:
+          (configuration as JSObject)["configurationName"].dartify() as String,
+      configurationValue:
+          (configuration)["configurationValue"].dartify() as int,
+      usbInterfaces: (configuration)["interfaces"] == null
           ? null
           : USBInterface.fromInterfaces(
-              getProperty(configuration, "interfaces")),
+              (configuration)["interfaces"].dartify() as List<dynamic>),
     );
   }
 
