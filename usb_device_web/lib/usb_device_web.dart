@@ -11,11 +11,6 @@ import 'package:usb_device_platform_interface/usb_device_platform_interface.dart
 
 import 'import_js/import_js_library.dart';
 
-@JS()
-extension type JSDeviceCallback._(JSFunction _) implements JSFunction {
-  external JSDeviceCallback(void Function(JSAny device) callback);
-}
-
 class WebUSBPlugin extends UsbDevicePlatform {
   late final WebUsbJS _webUsbJS;
 
@@ -240,7 +235,7 @@ class WebUSBPlugin extends UsbDevicePlatform {
 
 // JS
 @JS("WebUsbJS")
-class WebUsbJS {
+extension type WebUsbJS._(JSObject _) implements JSObject {
   external factory WebUsbJS();
 
   external bool isSupported();
