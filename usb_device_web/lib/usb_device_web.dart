@@ -11,6 +11,11 @@ import 'package:usb_device_platform_interface/usb_device_platform_interface.dart
 
 import 'import_js/import_js_library.dart';
 
+@JS()
+extension type JSDeviceCallback._(JSFunction _) implements JSFunction {
+  external JSDeviceCallback(void Function(JSAny device) callback);
+}
+
 class WebUSBPlugin extends UsbDevicePlatform {
   late final WebUsbJS _webUsbJS;
 
@@ -51,6 +56,7 @@ class WebUSBPlugin extends UsbDevicePlatform {
   Future open(dynamic device) async {
     final promise = this._webUsbJS.open(device) as JSPromise;
     return await promise.toDart;
+    // No return value needed for void function
   }
 
   @override
@@ -178,17 +184,19 @@ class WebUSBPlugin extends UsbDevicePlatform {
   @override
   Future<void> setOnConnectCallback(Function(dynamic) onConnect) async {
     this._webUsbJS.setOnConnectCallback(
-          ((device) {
-            onConnect(device);
-          }).toJS as dynamic,
+          ((JSAny device) {
+            onConnect(device.dartify());
+          }).toJS,
         );
   }
 
   @override
   Future<void> setOnDisconnectCallback(Function(dynamic) onDisconnect) async {
-    this._webUsbJS.setOnDisconnectCallback(((device) {
-          onDisconnect(device);
-        }).toJS as dynamic);
+    this._webUsbJS.setOnDisconnectCallback(
+          ((JSAny device) {
+            onDisconnect(device.dartify());
+          }).toJS,
+        );
   }
 
   @override
@@ -242,60 +250,59 @@ class WebUsbJS {
 
   external Promise requestDevice(List<DeviceFilterJS> filters);
 
-  external setOnConnectCallback(Function(dynamic) callback);
+  external setOnConnectCallback(JSFunction callback);
 
-  external setOnDisconnectCallback(Function(dynamic) callback);
+  external setOnDisconnectCallback(JSFunction callback);
 
   /// Session setup
-  external Promise open(dynamic device);
+  external Promise open(JSAny device);
 
-  external Promise close(dynamic device);
+  external Promise close(JSAny device);
 
-  external Promise claimInterface(dynamic device, int interfaceNumber);
+  external Promise claimInterface(JSAny device, int interfaceNumber);
 
-  external Promise releaseInterface(dynamic device, int interfaceNumber);
+  external Promise releaseInterface(JSAny device, int interfaceNumber);
 
-  external Promise reset(dynamic device);
+  external Promise reset(JSAny device);
 
-  external Promise selectConfiguration(dynamic device, int configurationValue);
+  external Promise selectConfiguration(JSAny device, int configurationValue);
 
   external Promise clearHalt(
-      dynamic device, String direction, int endpointNumber);
+      JSAny device, String direction, int endpointNumber);
 
   /// Data transfer
   external Promise controlTransferIn(
-      dynamic device, SetupParamJS setup, int? length);
+      JSAny device, SetupParamJS setup, int? length);
 
   external Promise controlTransferOut(
-      dynamic device, SetupParamJS setup, dynamic data);
+      JSAny device, SetupParamJS setup, JSAny data);
 
-  external Promise transferIn(dynamic device, int endpointNumber, int length);
+  external Promise transferIn(JSAny device, int endpointNumber, int length);
 
-  external Promise transferOut(
-      dynamic device, int endpointNumber, dynamic data);
+  external Promise transferOut(JSAny device, int endpointNumber, JSAny data);
 
   external Promise isochronousTransferIn(
-      dynamic device, int endpointNumber, List<int> packetLengths);
+      JSAny device, int endpointNumber, List<int> packetLengths);
 
   external Promise isochronousTransferOut(
-      dynamic device, int endpointNumber, dynamic data);
+      JSAny device, int endpointNumber, JSAny data);
 }
 
+// Convert to extension type
 @JS()
-@anonymous
-class Promise {
-  external void then(Function onFulfilled, Function onRejected);
+extension type Promise._(JSObject _) implements JSObject {
+  external void then(JSFunction onFulfilled, JSFunction onRejected);
 }
 
+// Convert to extension type
 @JS()
-@anonymous
-class DeviceFilterJS {
+extension type DeviceFilterJS._(JSObject _) implements JSObject {
   external factory DeviceFilterJS({int vendorId, int productId});
 }
 
+// Convert to extension type
 @JS()
-@anonymous
-class SetupParamJS {
+extension type SetupParamJS._(JSObject _) implements JSObject {
   external factory SetupParamJS({
     String requestType,
     String recipient,
