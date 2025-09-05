@@ -20,7 +20,7 @@ class ImportJsLibraryWeb {
   /// Future that resolves when all load.
   static Future<void> _importJSLibraries(List<String> libraries) {
     final List<Future<void>> loading = <Future<void>>[];
-    final head = web.document.head;
+    final head = web.document.querySelector('head') as web.HTMLHeadElement?;
 
     libraries.forEach((String library) {
       if (!isImported(library)) {
@@ -38,20 +38,19 @@ class ImportJsLibraryWeb {
       url = url.replaceFirst("./", "");
     }
 
-    final children = head.children; // HTMLCollection
-    for (var i = 0; i < children.length; i++) {
-      final element = children.item(i);
-      if (element is web.HTMLScriptElement && element.src.isNotEmpty) {
-        if (element.src.endsWith(url)) {
-          return true;
-        }
+    // Use querySelectorAll to get all script elements instead of iterating through children
+    final scripts = head.querySelectorAll('script');
+    for (var i = 0; i < scripts.length; i++) {
+      final element = scripts.item(i) as web.HTMLScriptElement?;
+      if (element != null && element.src.isNotEmpty && element.src.endsWith(url)) {
+        return true;
       }
     }
     return false;
   }
 
   static bool isImported(String url) {
-    final head = web.document.head;
+    final head = web.document.querySelector('head') as web.HTMLHeadElement?;
     return head != null && _isLoaded(head, url);
   }
 }
