@@ -41,7 +41,7 @@ class ImportJsLibraryWeb {
     final children = head.children; // HTMLCollection
     for (var i = 0; i < children.length; i++) {
       final element = children.item(i);
-      if (element is web.HTMLScriptElement) {
+      if (element is web.HTMLScriptElement && element.src.isNotEmpty) {
         if (element.src.endsWith(url)) {
           return true;
         }
